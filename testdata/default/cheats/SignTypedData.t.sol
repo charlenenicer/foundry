@@ -28,7 +28,7 @@ contract SignTypedDataTest is Test {
     }
 
     function testSignTypedDataMatchesManualDigest() public {
-        uint256 pk = 0x7e5f4552091a69125d5dfcb7b8c2659029395bdf;
+        uint256 pk = 0x1111111111111111111111111111111111111111111111111111111111111112;
         (uint8 v1, bytes32 r1, bytes32 s1) = vm.signTypedData(pk, JSON_DATA);
 
         bytes32 digest = vm.eip712HashTypedData(JSON_DATA);
@@ -59,7 +59,10 @@ contract SignTypedDataTest is Test {
         uint256 pk = 1;
         string memory invalidJson = "not valid json";
 
-        vm.expectRevert();
-        vm.signTypedData(pk, invalidJson);
+        try vm.signTypedData(pk, invalidJson) {
+            fail();
+        } catch {
+            // Expected to revert
+        }
     }
 }
