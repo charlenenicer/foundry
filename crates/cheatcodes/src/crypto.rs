@@ -217,6 +217,42 @@ impl Cheatcode for signCompact_3Call {
     }
 }
 
+impl Cheatcode for signTypedData_0Call {
+    fn apply_context_free(&self) -> Result {
+        let Self { wallet, jsonData } = self;
+        let digest = eip712_digest_from_json(jsonData)?;
+        let sig = sign(&wallet.privateKey, &digest)?;
+        Ok(encode_full_sig(sig))
+    }
+}
+
+impl Cheatcode for signTypedData_1Call {
+    fn apply_context(&self, state: &mut CheatcodesCore) -> Result {
+        let Self { privateKey, jsonData } = self;
+        let digest = eip712_digest_from_json(jsonData)?;
+        let sig = sign_cached(state, privateKey, &digest)?;
+        Ok(encode_full_sig(sig))
+    }
+}
+
+impl Cheatcode for signTypedData_2Call {
+    fn apply_context(&self, state: &mut CheatcodesCore) -> Result {
+        let Self { jsonData } = self;
+        let digest = eip712_digest_from_json(jsonData)?;
+        let sig = sign_with_wallet(state, None, &digest)?;
+        Ok(encode_full_sig(sig))
+    }
+}
+
+impl Cheatcode for signTypedData_3Call {
+    fn apply_context(&self, state: &mut CheatcodesCore) -> Result {
+        let Self { signer, jsonData } = self;
+        let digest = eip712_digest_from_json(jsonData)?;
+        let sig = sign_with_wallet(state, Some(*signer), &digest)?;
+        Ok(encode_full_sig(sig))
+    }
+}
+
 impl Cheatcode for signP256Call {
     fn apply_context_free(&self) -> Result {
         let Self { privateKey, digest } = self;
@@ -335,6 +371,13 @@ fn create_wallet(private_key: &U256, label: Option<&str>, state: &mut Cheatcodes
 
     Ok(Wallet { addr, publicKeyX: pub_key_x, publicKeyY: pub_key_y, privateKey: *private_key }
         .abi_encode())
+}
+
+fn eip712_digest_from_json(json_data: &str) -> Result<B256> {
+    use alloy_dyn_abi::eip712::TypedData;
+    let typed_data: TypedData = serde_json::from_str(json_data)?;
+    let digest = typed_data.eip712_signing_hash()?;
+    Ok(digest)
 }
 
 fn encode_full_sig(sig: alloy_primitives::Signature) -> Vec<u8> {

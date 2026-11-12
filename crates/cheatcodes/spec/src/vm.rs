@@ -3159,6 +3159,12 @@ interface Vm {
     #[cheatcode(group = Crypto)]
     function sign(Wallet calldata wallet, bytes32 digest) external pure returns (uint8 v, bytes32 r, bytes32 s);
 
+    /// Signs EIP-712 typed data with a `Wallet`.
+    ///
+    /// The typed data must be provided as JSON following the EIP-712 standard.
+    #[cheatcode(group = Crypto)]
+    function signTypedData(Wallet calldata wallet, string calldata jsonData) external pure returns (uint8 v, bytes32 r, bytes32 s);
+
     /// Signs data with a `Wallet`.
     ///
     /// Returns a compact signature (`r`, `vs`) as per EIP-2098, where `vs` encodes both the
@@ -3170,6 +3176,12 @@ interface Vm {
     /// Signs `digest` with `privateKey` using the secp256k1 curve.
     #[cheatcode(group = Crypto)]
     function sign(uint256 privateKey, bytes32 digest) external pure returns (uint8 v, bytes32 r, bytes32 s);
+
+    /// Signs EIP-712 typed data with `privateKey` using the secp256k1 curve.
+    ///
+    /// The typed data must be provided as JSON following the EIP-712 standard.
+    #[cheatcode(group = Crypto)]
+    function signTypedData(uint256 privateKey, string calldata jsonData) external pure returns (uint8 v, bytes32 r, bytes32 s);
 
     /// Signs `digest` with `privateKey` on the secp256k1 curve, using the given `nonce`
     /// as the raw ephemeral k value in ECDSA (instead of deriving it deterministically).
@@ -3208,6 +3220,18 @@ interface Vm {
     #[cheatcode(group = Crypto)]
     function sign(bytes32 digest) external pure returns (uint8 v, bytes32 r, bytes32 s);
 
+    /// Signs EIP-712 typed data with signer provided to script using the secp256k1 curve.
+    ///
+    /// The typed data must be provided as JSON following the EIP-712 standard.
+    ///
+    /// If `--sender` is provided, the signer with provided address is used, otherwise,
+    /// if exactly one signer is provided to the script, that signer is used.
+    ///
+    /// Raises error if signer passed through `--sender` does not match any unlocked signers or
+    /// if `--sender` is not provided and not exactly one signer is passed to the script.
+    #[cheatcode(group = Crypto)]
+    function signTypedData(string calldata jsonData) external pure returns (uint8 v, bytes32 r, bytes32 s);
+
     /// Signs `digest` with signer provided to script using the secp256k1 curve.
     ///
     /// Returns a compact signature (`r`, `vs`) as per EIP-2098, where `vs` encodes both the
@@ -3227,6 +3251,14 @@ interface Vm {
     /// Raises error if none of the signers passed into the script have provided address.
     #[cheatcode(group = Crypto)]
     function sign(address signer, bytes32 digest) external pure returns (uint8 v, bytes32 r, bytes32 s);
+
+    /// Signs EIP-712 typed data with signer provided to script using the secp256k1 curve.
+    ///
+    /// The typed data must be provided as JSON following the EIP-712 standard.
+    ///
+    /// Raises error if none of the signers passed into the script have provided address.
+    #[cheatcode(group = Crypto)]
+    function signTypedData(address signer, string calldata jsonData) external pure returns (uint8 v, bytes32 r, bytes32 s);
 
     /// Signs `digest` with signer provided to script using the secp256k1 curve.
     ///

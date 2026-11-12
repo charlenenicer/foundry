@@ -564,6 +564,42 @@ contract ScriptSign is ForgeTest {
     }
 }
 
+contract ScriptSignTypedData is ForgeTest {
+    string constant JSON_DATA = '{"types":{"EIP712Domain":[{"name":"name","type":"string"}],"Message":[{"name":"content","type":"string"}]},"primaryType":"Message","domain":{"name":"Test"},"message":{"content":"Hello"}}';
+
+    function run() external {
+        vm.startBroadcast();
+        (uint8 v, bytes32 r, bytes32 s) = vm.signTypedData(JSON_DATA);
+
+        bytes32 digest = vm.eip712HashTypedData(JSON_DATA);
+        SignatureTester tester = new SignatureTester();
+        (, address caller,) = vm.readCallers();
+        assertEq(tester.owner(), caller);
+        tester.verifySignature(digest, v, r, s);
+    }
+
+    function run(address sender) external {
+        vm._expectCheatcodeRevert(bytes("could not determine signer"));
+        vm.signTypedData(JSON_DATA);
+
+        (uint8 v, bytes32 r, bytes32 s) = vm.signTypedData(sender, JSON_DATA);
+        bytes32 digest = vm.eip712HashTypedData(JSON_DATA);
+        address actual = ecrecover(digest, v, r, s);
+
+        assertEq(actual, sender);
+    }
+
+    function runErrorNoSigner() external {
+        vm._expectCheatcodeRevert(bytes("no wallets available"));
+        vm.signTypedData(JSON_DATA);
+    }
+
+    function runErrorAmbiguous() external {
+        vm._expectCheatcodeRevert();
+        vm.signTypedData(JSON_DATA);
+    }
+}
+
 library BroadcastLib {
     event Set(uint256 value);
 

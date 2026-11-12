@@ -3611,6 +3611,44 @@ async fn can_sign_with_script_wallet_multiple(prj: _, cmd: _) {
         .simulate(ScriptOutcome::OkRun);
 }
 
+#[forgetest_init]
+async fn can_sign_typed_data_with_script_wallet_single(prj: _, cmd: _) {
+    let mut tester = ScriptTester::new_broadcast_without_endpoint(cmd, prj.root());
+    tester
+        .add_sig("ScriptSignTypedData", "run()")
+        .load_private_keys(&[0])
+        .await
+        .simulate(ScriptOutcome::OkNoEndpoint);
+}
+
+#[forgetest]
+async fn can_sign_typed_data_with_script_wallet_multiple(prj: _, cmd: _) {
+    let mut tester = ScriptTester::new_broadcast_without_endpoint(cmd, prj.root());
+    let acc = tester.accounts_pub[0].to_checksum(None);
+    tester
+        .add_sig("ScriptSignTypedData", "run(address)")
+        .arg(&acc)
+        .load_private_keys(&[0, 1, 2])
+        .await
+        .simulate(ScriptOutcome::OkRun);
+}
+
+#[forgetest]
+async fn sign_typed_data_errors_without_signer(prj: _, cmd: _) {
+    let mut tester = ScriptTester::new_broadcast_without_endpoint(cmd, prj.root());
+    tester.add_sig("ScriptSignTypedData", "runErrorNoSigner()").simulate(ScriptOutcome::OkRun);
+}
+
+#[forgetest]
+async fn sign_typed_data_errors_with_ambiguous_signer(prj: _, cmd: _) {
+    let mut tester = ScriptTester::new_broadcast_without_endpoint(cmd, prj.root());
+    tester
+        .add_sig("ScriptSignTypedData", "runErrorAmbiguous()")
+        .load_private_keys(&[0, 1, 2])
+        .await
+        .simulate(ScriptOutcome::OkRun);
+}
+
 #[forgetest]
 async fn fails_with_function_name_and_overloads(prj: _, cmd: _) {
     let script = prj.add_script(

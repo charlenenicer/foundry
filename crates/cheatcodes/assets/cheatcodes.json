@@ -11581,6 +11581,86 @@
     },
     {
       "func": {
+        "id": "signTypedData_0",
+        "description": "Signs EIP-712 typed data with a `Wallet`.\nThe typed data must be provided as JSON following the EIP-712 standard.",
+        "declaration": "function signTypedData(Wallet calldata wallet, string calldata jsonData) external pure returns (uint8 v, bytes32 r, bytes32 s);",
+        "visibility": "external",
+        "mutability": "pure",
+        "signature": "signTypedData((address,uint256,uint256,uint256),string)",
+        "selector": "0x3fb952f6",
+        "selectorBytes": [
+          63,
+          185,
+          82,
+          246
+        ]
+      },
+      "group": "crypto",
+      "status": "stable",
+      "safety": "safe"
+    },
+    {
+      "func": {
+        "id": "signTypedData_1",
+        "description": "Signs EIP-712 typed data with `privateKey` using the secp256k1 curve.\nThe typed data must be provided as JSON following the EIP-712 standard.",
+        "declaration": "function signTypedData(uint256 privateKey, string calldata jsonData) external pure returns (uint8 v, bytes32 r, bytes32 s);",
+        "visibility": "external",
+        "mutability": "pure",
+        "signature": "signTypedData(uint256,string)",
+        "selector": "0xa3f35987",
+        "selectorBytes": [
+          163,
+          243,
+          89,
+          135
+        ]
+      },
+      "group": "crypto",
+      "status": "stable",
+      "safety": "safe"
+    },
+    {
+      "func": {
+        "id": "signTypedData_2",
+        "description": "Signs EIP-712 typed data with signer provided to script using the secp256k1 curve.\nThe typed data must be provided as JSON following the EIP-712 standard.\nIf `--sender` is provided, the signer with provided address is used, otherwise,\nif exactly one signer is provided to the script, that signer is used.\nRaises error if signer passed through `--sender` does not match any unlocked signers or\nif `--sender` is not provided and not exactly one signer is passed to the script.",
+        "declaration": "function signTypedData(string calldata jsonData) external pure returns (uint8 v, bytes32 r, bytes32 s);",
+        "visibility": "external",
+        "mutability": "pure",
+        "signature": "signTypedData(string)",
+        "selector": "0xce210101",
+        "selectorBytes": [
+          206,
+          33,
+          1,
+          1
+        ]
+      },
+      "group": "crypto",
+      "status": "stable",
+      "safety": "safe"
+    },
+    {
+      "func": {
+        "id": "signTypedData_3",
+        "description": "Signs EIP-712 typed data with signer provided to script using the secp256k1 curve.\nThe typed data must be provided as JSON following the EIP-712 standard.\nRaises error if none of the signers passed into the script have provided address.",
+        "declaration": "function signTypedData(address signer, string calldata jsonData) external pure returns (uint8 v, bytes32 r, bytes32 s);",
+        "visibility": "external",
+        "mutability": "pure",
+        "signature": "signTypedData(address,string)",
+        "selector": "0x91cdaafc",
+        "selectorBytes": [
+          145,
+          205,
+          170,
+          252
+        ]
+      },
+      "group": "crypto",
+      "status": "stable",
+      "safety": "safe"
+    },
+    {
+      "func": {
         "id": "signWithNonceUnsafe",
         "description": "Signs `digest` with `privateKey` on the secp256k1 curve, using the given `nonce`\nas the raw ephemeral k value in ECDSA (instead of deriving it deterministically).",
         "declaration": "function signWithNonceUnsafe(uint256 privateKey, bytes32 digest, uint256 nonce) external pure returns (uint8 v, bytes32 r, bytes32 s);",
